@@ -34,7 +34,7 @@ namespace API.Controllers.v1
         }
 
         //POST
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<IActionResult> AddAsync(UserDto user)
         {
             var _user = new AppUser

@@ -56,6 +56,22 @@ namespace API
                 options.DefaultApiVersion = ApiVersion.Default;
             });
 
+            //Getting the jwt secret from the config
+            var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false, //TODO:Update this later
+                ValidateAudience = false, //TODO:Update this later
+                RequireExpirationTime = false, //TODO: Update this later
+                ValidateLifetime = true
+            };
+
+            //Injecting into our DI Container
+            services.AddSingleton(tokenValidationParameters);
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -64,19 +80,8 @@ namespace API
             })
                 .AddJwtBearer(options =>
                 {
-                    //Getting the jwt secret from the config
-                    var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
-
                     options.SaveToken = true;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false, //TODO:Update this later
-                        ValidateAudience = false, //TODO:Update this later
-                        RequireExpirationTime = false, //TODO: Update this later
-                        ValidateLifetime = true
-                    };
+                    options.TokenValidationParameters = tokenValidationParameters;
                 });
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)

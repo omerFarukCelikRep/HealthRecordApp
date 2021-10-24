@@ -4,9 +4,6 @@ using DataAccess.EntityFramework.Context;
 using DataAccess.EntityFramework.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DataAccess.EntityFramework.UnitOfWork
@@ -17,6 +14,7 @@ namespace DataAccess.EntityFramework.UnitOfWork
         private readonly ILogger _logger;
 
         public IUsersRepository Users { get; private set; }
+        public IRefreshTokenRepository RefreshTokens { get; private set; }
 
         public UnitOfWork(AppDbContext context, ILoggerFactory loggerFactory)
         {
@@ -24,6 +22,7 @@ namespace DataAccess.EntityFramework.UnitOfWork
             _logger = loggerFactory.CreateLogger("db_logs");
 
             Users = new UsersRepository(context, _logger);
+            RefreshTokens = new RefreshTokenRepository(context, _logger);
         }
 
         public async Task CompleteAsync()
