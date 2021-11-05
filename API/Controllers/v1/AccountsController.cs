@@ -21,15 +21,13 @@ namespace API.Controllers.v1
 {
     public class AccountsController : BaseController
     {
-        private readonly UserManager<IdentityUser> _userManager;
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly JwtConfig _jwtConfig;
         public AccountsController(IUnitOfWork unitOfWork,
                                     UserManager<IdentityUser> userManager,
                                     IOptionsMonitor<JwtConfig> optionsMonitor,
-                                    TokenValidationParameters tokenValidationParameters) : base(unitOfWork)
+                                    TokenValidationParameters tokenValidationParameters) : base(unitOfWork, userManager)
         {
-            _userManager = userManager;
             _jwtConfig = optionsMonitor.CurrentValue;
             _tokenValidationParameters = tokenValidationParameters;
         }
@@ -391,6 +389,7 @@ namespace API.Controllers.v1
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim("Id", user.Id),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) //Used by the refreshed token
