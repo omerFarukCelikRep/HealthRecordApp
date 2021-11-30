@@ -8,51 +8,50 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
-namespace API.Controllers.v1
+namespace API.Controllers.v1;
+
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+public class UsersController : BaseController
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class UsersController : BaseController
+    public UsersController(IUnitOfWork unitOfWork, UserManager<IdentityUser> userManager) : base(unitOfWork, userManager)
     {
-        public UsersController(IUnitOfWork unitOfWork, UserManager<IdentityUser> userManager) : base(unitOfWork, userManager)
+    }
+
+    //GET
+    [HttpGet]
+    public async Task<IActionResult> Get()
+    {
+        var users = await _unitOfWork.Users.GetAll();
+
+        return Ok(users);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var user = await _unitOfWork.Users.GetById(id);
+
+        return Ok(user);
+    }
+
+    //POST
+    [HttpPost("Add")]
+    public async Task<IActionResult> AddAsync(UserDto user)
+    {
+        var _user = new AppUser
         {
-        }
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            Country = user.Country,
+            DateOfBirth = user.DateOfBirth,
+            Phone = user.Phone
+        };
 
-        //GET
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            var users = await _unitOfWork.Users.GetAll();
+        await _unitOfWork.Users.Add(_user);
 
-            return Ok(users);
-        }
+        await _unitOfWork.CompleteAsync();
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
-        {
-            var user = await _unitOfWork.Users.GetById(id);
-
-            return Ok(user);
-        }
-
-        //POST
-        [HttpPost("Add")]
-        public async Task<IActionResult> AddAsync(UserDto user)
-        {
-            var _user = new AppUser
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Country = user.Country,
-                DateOfBirth = user.DateOfBirth,
-                Phone = user.Phone
-            };
-
-            await _unitOfWork.Users.Add(_user);
-
-            await _unitOfWork.CompleteAsync();
-
-            return CreatedAtRoute(nameof(GetById), new { id = _user.Id }, user);
-        }
+        return CreatedAtRoute(nameof(GetById), new { id = _user.Id }, user);
     }
 }
