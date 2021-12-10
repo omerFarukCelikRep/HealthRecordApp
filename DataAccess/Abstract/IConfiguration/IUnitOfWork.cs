@@ -7,6 +7,7 @@ namespace DataAccess.Abstract.IConfiguration
     {
         IUsersRepository Users { get; }
         IRefreshTokenRepository RefreshTokens { get; }
+        IHealthDataRepository HealthDatas { get; }
         Task CompleteAsync();
     }
 }
