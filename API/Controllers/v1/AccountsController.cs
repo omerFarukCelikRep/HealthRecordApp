@@ -2,6 +2,7 @@
 using Authentication.Models.Dtos.Generic;
 using Authentication.Models.Dtos.Incoming;
 using Authentication.Models.Dtos.Outgoing;
+using AutoMapper;
 using DataAccess.Abstract.IConfiguration;
 using Entity.Concrete;
 using Entity.Enums;
@@ -9,13 +10,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace API.Controllers.v1;
 public class AccountsController : BaseController
@@ -25,7 +22,8 @@ public class AccountsController : BaseController
     public AccountsController(IUnitOfWork unitOfWork,
                                 UserManager<IdentityUser> userManager,
                                 IOptionsMonitor<JwtConfig> optionsMonitor,
-                                TokenValidationParameters tokenValidationParameters) : base(unitOfWork, userManager)
+                                TokenValidationParameters tokenValidationParameters,
+                                IMapper mapper) : base(unitOfWork, userManager,mapper)
     {
         _jwtConfig = optionsMonitor.CurrentValue;
         _tokenValidationParameters = tokenValidationParameters;
