@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31702.278
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{7A70E94F-301F-441A-A9B7-8E0B717BF5CF}"
 EndProject
@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entity", "Entity\Entity.csproj", "{EB49274C-6F4B-4EB0-9EE3-B2E76A3E364B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication", "Authentication\Authentication.csproj", "{636DB933-0B7B-4DF3-B74D-224F89CE3D4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authentication", "Authentication\Authentication.csproj", "{636DB933-0B7B-4DF3-B74D-224F89CE3D4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configuration", "Configuration\Configuration.csproj", "{82E3856B-EED6-4601-8B66-0EDA145CD08A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{636DB933-0B7B-4DF3-B74D-224F89CE3D4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{636DB933-0B7B-4DF3-B74D-224F89CE3D4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{636DB933-0B7B-4DF3-B74D-224F89CE3D4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82E3856B-EED6-4601-8B66-0EDA145CD08A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82E3856B-EED6-4601-8B66-0EDA145CD08A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82E3856B-EED6-4601-8B66-0EDA145CD08A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82E3856B-EED6-4601-8B66-0EDA145CD08A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
