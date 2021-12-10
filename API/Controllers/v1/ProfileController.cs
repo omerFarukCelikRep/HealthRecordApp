@@ -1,18 +1,24 @@
-﻿using DataAccess.Abstract.IConfiguration;
+﻿using AutoMapper;
+using Configuration.Messages;
+using DataAccess.Abstract.IConfiguration;
+using Entity.Concrete;
+using Entity.Dtos.Generic;
 using Entity.Dtos.Incoming.Profile;
+using Entity.Dtos.Outgoing.Profile;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
 
 namespace API.Controllers.v1;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class ProfileController : BaseController
 {
-    public ProfileController(IUnitOfWork unitOfWork, UserManager<IdentityUser> userManager) : base(unitOfWork, userManager)
+    public ProfileController(
+                             IUnitOfWork unitOfWork,
+                             UserManager<IdentityUser> userManager,
+                             IMapper mapper) : base(unitOfWork, userManager, mapper)
     {
     }
 
@@ -20,42 +26,59 @@ public class ProfileController : BaseController
     public async Task<IActionResult> GetProfile()
     {
         var loggedInUser = await _userManager.GetUserAsync(HttpContext.User);
+        var result = new Result<ProfileDto>();
 
         if (loggedInUser == null)
         {
-            return BadRequest("User Not Found");
+            result.Error = PopulateError(400, ErrorMessages.Profile.UserNotFound, ErrorMessages.Generic.TypeBadRequest);
+
+            return BadRequest(result);
         }
 
         var profile = await _unitOfWork.Users.GetByIdentityId(new Guid(loggedInUser.Id));
 
         if (profile == null)
         {
-            return BadRequest("User Not Found");
+            result.Error = PopulateError(400, ErrorMessages.Profile.UserNotFound, ErrorMessages.Generic.TypeBadRequest);
+
+            return BadRequest(result);
         }
 
-        return Ok(profile);
+        var mappedProfile = _mapper.Map<ProfileDto>(profile);
+
+        result.Content = mappedProfile;
+
+        return Ok(result);
     }
 
     [HttpPut]
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto profile)
     {
+        var result = new Result<ProfileDto>();
+
         if (!ModelState.IsValid)
         {
-            return BadRequest("Invalid Payload");
+            result.Error = PopulateError(400, ErrorMessages.Generic.InvalidPayload, ErrorMessages.Generic.TypeBadRequest);
+
+            return BadRequest(result);
         }
 
         var loggedInUser = await _userManager.GetUserAsync(HttpContext.User);
 
         if (loggedInUser == null)
         {
-            return BadRequest("User Not Found");
+            result.Error = PopulateError(400, ErrorMessages.Profile.UserNotFound, ErrorMessages.Generic.TypeBadRequest);
+
+            return BadRequest(result);
         }
 
         var userProfile = await _unitOfWork.Users.GetByIdentityId(new Guid(loggedInUser.Id));
 
         if (userProfile == null)
         {
-            return BadRequest("User Not Found");
+            result.Error = PopulateError(400, ErrorMessages.Profile.UserNotFound, ErrorMessages.Generic.TypeBadRequest);
+
+            return BadRequest(result);
         }
 
         userProfile.Address = profile.Address;
@@ -68,9 +91,15 @@ public class ProfileController : BaseController
         if (isUpdated)
         {
             await _unitOfWork.CompleteAsync();
-            return Ok(profile);
+
+            var mappedProfile = _mapper.Map<ProfileDto>(userProfile);
+
+            result.Content = mappedProfile;
+            return Ok(result);
         }
 
-        return BadRequest("Something went wrong, please try again later");
+        result.Error = PopulateError(500, ErrorMessages.Generic.SomethingWentWrong, ErrorMessages.Generic.UnableToProcess);
+
+        return BadRequest(result);
     }
 }
