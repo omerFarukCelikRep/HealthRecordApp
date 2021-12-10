@@ -15,6 +15,7 @@ namespace DataAccess.EntityFramework.UnitOfWork
 
         public IUsersRepository Users { get; private set; }
         public IRefreshTokenRepository RefreshTokens { get; private set; }
+        public IHealthDataRepository HealthDatas { get; private set; }
 
         public UnitOfWork(AppDbContext context, ILoggerFactory loggerFactory)
         {
@@ -23,6 +24,7 @@ namespace DataAccess.EntityFramework.UnitOfWork
 
             Users = new UsersRepository(context, _logger);
             RefreshTokens = new RefreshTokenRepository(context, _logger);
+            HealthDatas = new HealthDataRepository(context, _logger);
         }
 
         public async Task CompleteAsync()
